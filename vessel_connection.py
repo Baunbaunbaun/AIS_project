@@ -9,6 +9,9 @@ import types
 import random
 import mock_signal as mock
 
+# queue for AIS message 
+AIS_queue =[] 
+
 # connection setup
 host = '127.0.0.1'
 port = 2001
@@ -24,14 +27,16 @@ while(not mock.NMEA_queue.empty()):
     messages.append(m.encode())
 """
 
+while(not AIS_queue.empty()):
+    m = AIS_queue.get()
+    messages.append(m.encode())
 
 
-
-
+"""
 while(not mock.NMEA_queue.empty()):
     m = mock.NMEA_queue.get()
     messages.append(m.encode())
-
+"""
 
 
 def start_connection():

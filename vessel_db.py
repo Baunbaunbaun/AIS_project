@@ -27,5 +27,11 @@ def send_menu_to_shore():
     lst = get_mmsi_in_slot(slot)
     # put in send queue
 
+# def send_data_to_shore():
+    
+
+
+
+
 # MAX ANTAL X SAMME MMSI I SLOT?
-# 100 SEKUNDER, 4 STK ?
+# 100 SEKUNDER, 4 STK 

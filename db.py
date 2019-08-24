@@ -46,24 +46,24 @@ def get_mmsi_not_in_slot(cursor, lst): # [slot, [mmsi_lst]]
     cursor.execute(statement)
     out = cursor.fetchall()
     no_slot = out[0][0] == 0
-    print('DB: Slot ' + str(slot) + 'is not in DB: ', no_slot) 
+    # print('DB: Slot ' + str(slot) + 'is not in DB: ', no_slot) 
     # if no slot, return lst
     if (no_slot): 
-        print('Result: ',lst)
+        # print('Result: ',lst)
         return lst
 
     out = [slot]
-    print('Lst: ', mmsi_lst)
+    # print('Lst: ', mmsi_lst)
     # statement = 'SELECT mmsi FROM messages WHERE mmsi not in (SELECT mmsi FROM messages WHERE slot = '  + str(slot) + ' ) '  # mmsi in ' + str(lst_to_tuple(mmsi_lst)) + ' and 
     # statement = "SELECT mmsi FROM messages WHERE mmsi in " + str(lst_to_tuple(mmsi_lst))  # and mmsi not in (SELECT mmsi FROM messages WHERE slot = 5)" 
     statement = 'SELECT mmsi FROM messages WHERE slot = '  + str(slot) # + 'and mmsi not in ' + str(lst_to_tuple(mmsi_lst))
-    print("Statement 1: ", statement)
+    # print("Statement 1: ", statement)
     cursor.execute(statement)
     res = tuples_to_values( cursor.fetchall() )
-    print('In slot ', res )
+    # print('In slot ', res )
     res = lst_minus_lst(mmsi_lst,res)
-    print('What is in lst, but not in slot?', res) 
-    print("DB: Getting MMSI's missing from slot ", slot)
+    # print('What is in lst, but not in slot?', res) 
+    # print("DB: Getting MMSI's missing from slot ", slot)
     out.append(res)
     return out
 
@@ -72,7 +72,7 @@ def get_mmsi_in_slot(cursor, slot):
     statement = 'SELECT mmsi FROM messages WHERE slot = ' + str(slot) 
     cursor.execute(statement)
     out.append( list(tuples_to_values(cursor.fetchall())) ) 
-    print("DB: Getting MMSI's from DB where slot = ", slot, "\nResult: ", out)    
+    # print("DB: Getting MMSI's from DB where slot = ", slot, "\nResult: ", out)    
     return out
 
 def get_messages(cursor, lst): # [slot, [mmsi_lst]]
@@ -83,7 +83,7 @@ def get_messages(cursor, lst): # [slot, [mmsi_lst]]
     out = [slot]
     res = cursor.fetchall()
     out.append(res)
-    print("DB: getting messages")
+    # print("DB: getting messages")
     return out
 
 def printRows(cursor):
@@ -96,10 +96,12 @@ def printRows(cursor):
         count += 1
 
 def get_size(cursor):
-    statement = 'SELECT COUNT(*) FROM messages'
+    statement = 'SELECT count(key) FROM messages'
     cursor.execute(statement)
-    print("DB: getting size of DB")
-    return cursor.fetchall()[0][0]  
+    # print("DB: getting size of DB")
+    out = cursor.fetchall()
+    size = out[0][0]
+    return size  
 
 def get_top_3(cursor):
     statement = 'SELECT * FROM messages LIMIT 3' 

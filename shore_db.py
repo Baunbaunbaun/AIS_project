@@ -22,19 +22,10 @@ def insert_lst(lst):
 def get_mmsi_not_in_slot(lst): # [slot, [mmsi_lst]]
     return db.get_mmsi_not_in_slot(shore_cursor, lst)
 
-
-
-
-
-
-
-
-
-
  # dublet rows in DB FN
 def has_mmsi_in_slot(mmsi, slot):
     mmsi_lst = db.get_specific_mmsi_in_slot(shore_cursor, mmsi, slot)
-    print("getting ", mmsi, " in ", slot)    
+    # print("getting ", mmsi, " in ", slot)    
     return len(mmsi_lst)>0
 
 
@@ -53,42 +44,3 @@ def check_menu(menu):
     # logic here
     request_lst = []
     return request_lst
-
-
-"""
-
-# testing DB operations
-
-shore_cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-print("Tables in DB: ", shore_cursor.fetchall())
-
-# INSERT
-for i in range(10):
-    input = str(i), str(i), i, i, float(i), float(i)
-    insert(input)
-
-msg_test_lst = []
-for i in range(10,20):
-    input = str(i), str(i), i, i, float(i), float(i)
-    msg_test_lst.append(input)
-
-print(msg_test_lst)
-
-print_db()
-
-print("Size:", get_size())
-
-top3 = [0,1,2]
-top3msg = get_top_3()
-# print(top3msg)
-insert_lst(msg_test_lst)
-
-print_db()
-
-print(get_mmsi_not_in_slot(top3, 1))
-
-# print(has_mmsi_in_slot(9,7))
-
-#print(get_specific_mmsi_in_slot("(1,2,3)", 5))
-
-"""

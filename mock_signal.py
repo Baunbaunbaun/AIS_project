@@ -8,20 +8,30 @@ import ais
 file = open('/Users/baunbaun/dropbox/ba/BA_python/data/nmea_sample_200.txt','r') 
 
 # queue to hold "received" messages
-NMEA_queue = queue.Queue(maxsize=200)
+NMEA_queue = queue.Queue(maxsize=100)
 
 # settings for file operations
-sleep   = 0.01   # seconds of sleep pr row
+sleep   = 0.1   # seconds of sleep pr row
 
+print('MOCK:',NMEA_queue.qsize(),'NMEA p.t.')
 print('MOCK: Receiving NMEA ...')
 
 # vessel receives an NMEA message every [sleep] and put this in a queue
+count = 5000
 for line in file: 
-        time.sleep(sleep)
+        # time.sleep(sleep)
         try: 
+                if(NMEA_queue.full()):
+                        break
                 NMEA_queue.put(line)
+                # print('put')
         except:
-                continue
+                print('NMEA import failed with: ', line)
+                break
+
+        if(count == 1): 
+                break
+        count -= 1
 
 print('MOCK:',NMEA_queue.qsize(),'NMEA received')
 

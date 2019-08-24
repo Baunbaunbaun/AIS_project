@@ -10,12 +10,10 @@ import vessel_db as vdb
 import shore_db as sdb
 
 import functions as fun
-
 import time
 import ais
 import hashlib
 import random
-
 
 # AIS messages types with possition data
 selectedMsgs = {1,2,3,18,19,27}
@@ -28,37 +26,54 @@ fragmentNum = ''
 payload     = ''
 fillBits    = 0
 
-# variables for DB
-cut         = 9     # set slot interval: 8, 9, 10 = 1, 10, 100 (sleep * seconds) 
+# variables for Mock signal and for DB
+cut         = 10     # set slot interval: 8, 9, 10, 11 = 0.001, 0.01, 0.1, 1 seconds (slot size = sleep * cut)
 hash_object = hashlib.md5(b'')
 key         = ''
 timestamp   = ''
-slot        = int(str(time.time())[:cut]) 
+slot = int(str(time.time())[:cut]) 
+# make sure slot is even
 if (slot%2 != 0): slot += 1
-
-slot1       = 0
+    
 mmsi        = ''
 x           = ''
 y           = ''
 
-print(" Sleep: ", mock.sleep, " cut: ", cut)
+slot_size = 10**cut / 10**11 * mock.sleep
+
+print(" Sleep: ", mock.sleep, " cut: ", cut, 'slot size: ', '{:.7f}'.format(slot_size))
 
 # read from queue and fill in DB
 # receive NMEA messages
+
 def NMEA_import():
+    global slot    
     print('VES: importing NMEA')
+    count = 0
 
+    # translate NMEA msg in queue to AIS
+    # break, when empty queue
     while(True):
-        # get initial time slot
-        slot = int(str(time.time())[:8]) # 100 second intervals
 
+        count += 1
+        time.sleep(mock.sleep)
+
+
+        # SLOT LOGIC
+        # get initial time slot
         t = int(str(time.time())[:cut]) # intervals
         # get even slot number
-        if (t%2 == 0):
+        if (t%2 == 0 and t != slot):
             slot = t
+            print('new slot: %d',slot)
                 
+
+
+
+
         # get NMEA message from queue
         if mock.NMEA_queue.empty(): 
+            print('No more NMEA messages!')
             break
 
         NMEA = mock.NMEA_queue.get(block=True, timeout=1)
@@ -100,52 +115,25 @@ def NMEA_import():
             timestamp = str(time.time())
             x = float(aisDict['x']) 
             y = float(aisDict['y']) 
-            
-            print("\n", key, slot, mmsi, timestamp, x, y)
-
-            # timestamp = str(time.time()).replace('.', '')
-            #timestamp = timestamp[:10] # 100 second intervals
 
             # this try statement, skips messages already in the DB
             try:
-                print('VES: Row inserted!')
                 vdb.insert(key, slot, mmsi, timestamp, x, y)
-                if(slot%3==0): 
+                
+                # FILL UP SDB FOR TESTING
+                if(mmsi%2==0): 
                     input = key, slot, mmsi, timestamp, x, y
                     sdb.insert(input)
-            except:
-                print("VES: insert aborted! With data:\n")  #, slot, mmsi, timestamp, x, y)
-                continue
 
-            # print(aisLst)
-            # print(str(aisDict))
-    print('VES: import finished')
-    vdb.print_db()
-    sdb.print_db()
+            except:
+                # print("VES: insert aborted! With data:\n")  #, slot, mmsi, timestamp, x, y)
+                continue    
 
     return 
 
-
 NMEA_import()
 
+print('VES: import finished\nSize VDB: ', vdb.get_size(), '\nSize SDB: ', sdb.get_size())
 
-
-"""
-# vessel to shore loop
-while (True):
-    
-    vdb.send_menu_to_shore(slot)
-
-    if(mock.NMEA_queue.empty()):
-        break
-
-
-
-print("NMEA queue: ", mock.NMEA_queue)
-
-print("VDB content: ", vdb.print_db())
-
-# test send function, list of mmsi
-"""
 
 
