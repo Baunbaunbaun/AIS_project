@@ -1,13 +1,14 @@
 ### VESSEL AIS SERVICE ###
 
-# starts mock signal
+# starts mock NMEA signal
 import mock_signal as mock
-
-# import vessel_connection
 import vessel_db as vdb
 
 # for testing
 import shore_db as sdb
+
+# import vessel_connection as vcon
+import conn_vessel as vcon
 
 import functions as fun
 import time
@@ -31,10 +32,6 @@ cut         = 10     # set slot interval: 8, 9, 10, 11 = 0.001, 0.01, 0.1, 1 sec
 hash_object = hashlib.md5(b'')
 key         = ''
 timestamp   = ''
-slot = int(str(time.time())[:cut]) 
-# make sure slot is even
-if (slot%2 != 0): slot += 1
-    
 mmsi        = ''
 x           = ''
 y           = ''
@@ -47,7 +44,11 @@ print(" Sleep: ", mock.sleep, " cut: ", cut, 'slot size: ', '{:.7f}'.format(slot
 # receive NMEA messages
 
 def NMEA_import():
-    global slot    
+    slot = int(str(time.time())[:cut]) 
+    # make sure slot is even
+    if (slot%2 != 0): slot += 1
+    prev_slot = slot
+    
     print('VES: importing NMEA')
     count = 0
 
@@ -58,18 +59,20 @@ def NMEA_import():
         count += 1
         time.sleep(mock.sleep)
 
-
         # SLOT LOGIC
         # get initial time slot
         t = int(str(time.time())[:cut]) # intervals
         # get even slot number
         if (t%2 == 0 and t != slot):
+            prev_slot = slot
             slot = t
-            print('new slot: %d',slot)
-                
+            print('new slot: %d' %prev_slot)
 
-
-
+            print("VDB – send to shore 1")    
+            # get data
+            vdb_get_from_slot = vdb.get_mmsi_in_slot(prev_slot)
+            # put in send queue
+            vcon.send_queue.put(vdb_get_from_slot)
 
         # get NMEA message from queue
         if mock.NMEA_queue.empty(): 
@@ -132,6 +135,13 @@ def NMEA_import():
     return 
 
 NMEA_import()
+
+vcon.send()
+
+#vdb.print_db()
+
+# fun.print_queue(vcon.send_queue)
+
 
 print('VES: import finished\nSize VDB: ', vdb.get_size(), '\nSize SDB: ', sdb.get_size())
 

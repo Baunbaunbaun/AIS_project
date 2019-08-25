@@ -2,6 +2,8 @@
 
 ### CODE FROM python-sockets-tutorial/multiconn-client.py
 
+import queue
+import functions as fun
 import sys
 import socket
 import selectors
@@ -10,7 +12,7 @@ import random
 import mock_signal as mock
 
 # queue for AIS message 
-AIS_queue =[] 
+send_queue = queue.Queue(maxsize=100)
 
 # connection setup
 host = '127.0.0.1'
@@ -18,7 +20,6 @@ port = 2001
 server_addr = (host, port)
 sel = selectors.DefaultSelector()
 m = ''
-messages = []
 
 """
 # LAV OM TIL AT VENTE PÅ KØ IKKE TOM
@@ -27,10 +28,15 @@ while(not mock.NMEA_queue.empty()):
     messages.append(m.encode())
 """
 
-while(not AIS_queue.empty()):
-    m = AIS_queue.get()
+# print('TEST 99 ', not send_queue.empty())
+
+messages = []
+while(not send_queue.empty()):
+    m = send_queue.get()
+    print("SEND Q")
     messages.append(m.encode())
 
+fun.print_queue(send_queue)
 
 """
 while(not mock.NMEA_queue.empty()):
@@ -81,16 +87,22 @@ def service_connection(key, mask):
 
 start_connection()
 
+"""
+
 try:
-    while True:
+    #while True:
         events = sel.select(timeout=1)
         if events:
             for key, mask in events:
                 service_connection(key, mask)
         # Check for a socket being monitored to continue.
-        if not sel.get_map():
-            break
+        #if not sel.get_map():
+         #   break
 except KeyboardInterrupt:
     print("caught keyboard interrupt, exiting")
 finally:
     sel.close()
+
+
+"""
+

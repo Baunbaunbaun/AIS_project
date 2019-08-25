@@ -36,7 +36,7 @@ def service_connection(key, mask):
             sock.close()
     if mask & selectors.EVENT_WRITE:
         if data.outb:
-            #print("Received", repr(data.outb), "to", data.addr)
+            print("Received:\n", repr(data.outb) )    #, "to", data.addr)
             
             # insert in DB
             sdb.insert(repr(data.outb))
@@ -61,6 +61,6 @@ try:
                 service_connection(key, mask)
 except KeyboardInterrupt:
     print("caught keyboard interrupt, exiting")
-    sdb.print_db()
+    # sdb.print_db()
 finally:
     sel.close()

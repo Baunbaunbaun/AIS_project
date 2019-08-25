@@ -1,5 +1,21 @@
-import time
+import time, queue
 
+
+
+send_queue = queue.Queue(maxsize=100)
+messages = []
+
+t = b'test'
+send_queue.put('hej')
+out = send_queue.get()
+print(len(out))
+try: 
+        out = send_queue.get()
+except:
+        pass
+
+print(len(out))
+"""
 
 a = [1,2,3]
 b = [2]
@@ -12,7 +28,6 @@ slot_size = (10**cut) * sleep
 slot_size =  slot_size / (10**11)
 print(float(slot_size))
 
-"""
 
 print(sleep, cut, "{:.5f}".format(int(slot_size)))
 
