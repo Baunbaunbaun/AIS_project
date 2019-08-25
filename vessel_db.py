@@ -21,6 +21,11 @@ def print_db():
 def get_size():
     return db.get_size(vessel_cursor)
 
+
+"""
+
+
+
 # maybe just a loop in vessel?
 def send_menu_to_shore():
     slot = 0
@@ -35,3 +40,5 @@ def send_menu_to_shore():
 
 # MAX ANTAL X SAMME MMSI I SLOT?
 # 100 SEKUNDER, 4 STK 
+
+"""

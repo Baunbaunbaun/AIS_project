@@ -17,6 +17,7 @@ def insert_lst(lst):
             insert(msg)
         except:
             continue
+    return 1
  
 # return all mmsi from list, that is not in shore_db in specific slot
 def get_mmsi_not_in_slot(lst): # [slot, [mmsi_lst]]
@@ -25,15 +26,19 @@ def get_mmsi_not_in_slot(lst): # [slot, [mmsi_lst]]
  # dublet rows in DB FN
 def has_mmsi_in_slot(mmsi, slot):
     mmsi_lst = db.get_specific_mmsi_in_slot(shore_cursor, mmsi, slot)
-    # print("getting ", mmsi, " in ", slot)    
     return len(mmsi_lst)>0
-
 
 def print_db():
     db.printRows(shore_cursor)
 
 def get_size():
     return db.get_size(shore_cursor)
+
+
+
+
+"""
+
 
 def get_top_3():  
     return db.get_top_3(shore_cursor)
@@ -44,3 +49,5 @@ def check_menu(menu):
     # logic here
     request_lst = []
     return request_lst
+
+"""

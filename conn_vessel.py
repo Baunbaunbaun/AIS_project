@@ -2,14 +2,14 @@ import socket
 import sys, errno
 import queue
 import time
+import vessel_db as vdb
 
 # variable declarations
-modifiedSentence = ''
+sentence = ''
 serverName = "127.0.0.1"
 serverPort = 2001
 send_queue = queue.Queue(maxsize=100)
 messages = []
-
 
 
 # fill up list with test values
@@ -36,8 +36,11 @@ def send():
 		
 		try:
 			print('\nTRY receive on vessel')
-			modifiedSentence = client_socket.recv(1024).decode()
-			print('VESSEL received: ', modifiedSentence)
+			sentence = client_socket.recv(1024).decode()
+			print('VESSEL received: ', sentence)
+			msg = vdb.get_messages(eval(sentence))
+			send_queue.put(msg)
+
 		except:
 			pass
 
@@ -45,44 +48,3 @@ def send():
 	# client_socket.close()
 
 
-"""
-
-
-
-
-modifiedSentence = client_socket.recv(1024)
-print('From Server: ', modifiedSentence.decode())
-client_socket.close()
-
-
-
-
-
-
-while(not send_queue.empty()):
-    m = send_queue.get()
-    print("SEND Q")
-    messages.append(m.encode())
-
-# send loop
-# for i in range(len(messages)):
-while (True):
-	if(send_queue.empty()): break
-	try:
-		print('testing')
-		# client_s
-		#ocket.send(messages.pop(0).encode())
-		client_s
-	ocket.send(t)
-	except: 
-		break
-
-try:
-	modifiedSentence = client_socket.recv(1024)
-except:
-	# print("Receive error – bytes: ", modifiedSentence.__sizeof__())
-	pass
-
-print('From Server: ', modifiedSentence.decode())
-client_socket.close()
-"""

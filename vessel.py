@@ -5,9 +5,8 @@ import mock_signal as mock
 import vessel_db as vdb
 
 # for testing
-import shore_db as sdb
+#import shore_db as sdb
 
-# import vessel_connection as vcon
 import conn_vessel as vcon
 
 import functions as fun
@@ -68,7 +67,6 @@ def NMEA_import():
             slot = t
             print('new slot: %d' %prev_slot)
 
-            # print("VDB – send to shore 1")    
             # get data
             vdb_get_from_slot = vdb.get_mmsi_in_slot(prev_slot)
             # put in send queue
@@ -126,10 +124,9 @@ def NMEA_import():
                 # FILL UP SDB FOR TESTING
                 if(mmsi%2==0): 
                     input = key, slot, mmsi, timestamp, x, y
-                    sdb.insert(input)
+                    #sdb.insert(input)
 
             except:
-                # print("VES: insert aborted! With data:\n")  #, slot, mmsi, timestamp, x, y)
                 continue    
 
     return 
@@ -143,7 +140,7 @@ vcon.send()
 # fun.print_queue(vcon.send_queue)
 
 
-print('VES: import finished\nSize VDB: ', vdb.get_size(), '\nSize SDB: ', sdb.get_size())
+print('VES: import finished\nSize VDB: ', vdb.get_size()  )  # , '\nSize SDB: '  , sdb.get_size())
 
 
 
