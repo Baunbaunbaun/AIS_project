@@ -68,7 +68,7 @@ def NMEA_import():
             slot = t
             print('new slot: %d' %prev_slot)
 
-            print("VDB – send to shore 1")    
+            # print("VDB – send to shore 1")    
             # get data
             vdb_get_from_slot = vdb.get_mmsi_in_slot(prev_slot)
             # put in send queue

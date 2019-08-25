@@ -1,9 +1,10 @@
 import socket
 import sys, errno
 import queue
+import time
 
 # variable declarations
-modifiedSentence = b''
+modifiedSentence = ''
 serverName = "127.0.0.1"
 serverPort = 2001
 send_queue = queue.Queue(maxsize=100)
@@ -20,7 +21,7 @@ messages = []
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # connet to server
 client_socket.connect((serverName,serverPort))
-client_socket.setblocking(False)
+#client_socket.setblocking(False)
 
 print('VCONN!')
 
@@ -30,14 +31,15 @@ def send():
 		out = send_queue.get()
 		if(send_queue.empty()): 
 			break
-		print(out)
+		print('\nSending: ', out)
 		client_socket.send(str(out).encode())
-
-	try:
-		modifiedSentence = client_socket.recv(1024)
-		print('VESSEL received: ', modifiedSentence.decode())
-	except:
-		pass
+		
+		try:
+			print('\nTRY receive on vessel')
+			modifiedSentence = client_socket.recv(1024).decode()
+			print('VESSEL received: ', modifiedSentence)
+		except:
+			pass
 
 
 	# client_socket.close()

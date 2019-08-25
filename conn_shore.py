@@ -2,6 +2,8 @@
 
 import socket
 import queue
+import shore_db as sdb
+import time
 
 receive_queue = queue.Queue(100)
 
@@ -19,6 +21,7 @@ print('The server is ready to receive')
 while True:
     connectionSocket, addr = server_socket.accept()
     print('accepted!')
+    out = ''
 
     while(True):
         # receive
@@ -27,13 +30,26 @@ while True:
             receive_queue.put(sentence)
         except: 
             pass
-        print('SHORE received: ', sentence)
-        if(len(sentence)==0): break
-
+        print('\nSHORE received: ', sentence)
+        if(len(sentence)==0): 
+            print('sentence == 0')
+            break
+        
         # send
-        capitalizedSentence = sentence.upper()
+        try:
+
+            out = eval(sentence)
+        except:
+            print('\nEVAL broke with', sentence)
+            break
+
+        answer = sdb.get_mmsi_not_in_slot(out)
+        print('MMSI not in slot ', out[0], '\n', answer)
+        # capitalizedSentence = sentence.upper()
         try: 
-            connectionSocket.send(capitalizedSentence.encode())
+            print('TRY encode and send')
+            connectionSocket.send(str(answer).encode())
+            print('succes')
         except:
             print('Closing connection')
             break
