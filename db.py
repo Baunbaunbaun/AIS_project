@@ -49,7 +49,6 @@ def get_mmsi_not_in_slot(cursor, lst): # [slot, [mmsi_lst]]
     no_slot = out[0][0] == 0
     # if no slot, return lst
     if (no_slot): 
-        # print('Result: ',lst)
         return lst
 
     out = [slot]
@@ -141,7 +140,6 @@ def test_data_in_db(db, cursor, amount):
     print('Test DB created')
     printRows(cursor)
     return slots
-
 
 def delete(db,cursor,slot):
     cursor.execute('DELETE FROM messages WHERE slot = ' + str(slot))

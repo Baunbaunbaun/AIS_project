@@ -1,5 +1,19 @@
 import time, queue
 import sys
+import queue
+
+testQ = queue.Queue(5)
+for i in range(5):
+        testQ.put(i)
+
+
+for i in range(6):
+        testQ.empty()
+        except: 
+                print('nothing to get!')
+                break
+
+
 
 a = '3'
 b = eval(a)

@@ -2,7 +2,6 @@
 
 import socket
 import queue
-import time
 import shore_db as sdb
 # fill in test data
 slots_shore = sdb.test_data_in_db(4)
@@ -33,16 +32,14 @@ while True:
     out = ''
 
     while(True):
-        # receive
         try:
-            sentence = connectionSocket.recv(2048).decode()
+            sentence = connectionSocket.recv(2048).decode()             # RECEIVE
             print('\nSHORE receive with succes:\n', sentence)
-            # receive_queue.put(sentence)
         except:
             print('\nSHORE prob with receive!\n')
             pass
         if(len(sentence) == 0):
-            print('ABORTING: sentence empty')
+            print('ABORTING: sentence empty\n')
             break
 
         # send
@@ -54,8 +51,7 @@ while True:
 
         try:
             print('\nSHORE send:\n', str(out))
-            connectionSocket.send(str(out).encode())
-            print('succes')
+            connectionSocket.send(str(out).encode())                    # SEND
         except:
             print('Closing connection')
             break

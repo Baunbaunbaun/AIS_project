@@ -37,21 +37,3 @@ def get_size():
 # start test data
 def test_data_in_db(amount):
     return db.test_data_in_db(shore_db,shore_cursor,amount)
-
-
-
-
-
-"""
-
-def get_top_3():  
-    return db.get_top_3(shore_cursor)
-
-def check_menu(menu):
-    slot = menu[0]
-    mmsi_lst = menu[1]
-    # logic here
-    request_lst = []
-    return request_lst
-
-"""

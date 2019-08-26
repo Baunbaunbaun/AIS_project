@@ -27,24 +27,3 @@ def test_data_in_db(amount):
 
 def delete(slot):
     db.delete(vessel_db,vessel_cursor,slot)
-
-"""
-
-
-
-# maybe just a loop in vessel?
-def send_menu_to_shore():
-    slot = 0
-    lst = get_mmsi_in_slot(slot)
-    # put in send queue
-
-# def send_data_to_shore():
-    
-
-
-
-
-# MAX ANTAL X SAMME MMSI I SLOT?
-# 100 SEKUNDER, 4 STK 
-
-"""
