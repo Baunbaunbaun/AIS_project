@@ -21,6 +21,12 @@ def print_db():
 def get_size():
     return db.get_size(vessel_cursor)
 
+# start test data
+def test_data_in_db(amount):
+    return db.test_data_in_db(vessel_db,vessel_cursor,amount)
+
+def delete(slot):
+    db.delete(vessel_db,vessel_cursor,slot)
 
 """
 

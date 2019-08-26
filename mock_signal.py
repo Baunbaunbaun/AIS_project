@@ -14,7 +14,7 @@ NMEA_queue = queue.Queue(maxsize=100)
 sleep   = 0.1   # seconds of sleep pr row
 
 print('MOCK:',NMEA_queue.qsize(),'NMEA p.t.')
-print('MOCK: Receiving NMEA ...')
+print('MOCK: Receiving NMEA ...')        
 
 # vessel receives an NMEA message every [sleep] and put this in a queue
 count = 5000
@@ -38,4 +38,3 @@ print('MOCK:',NMEA_queue.qsize(),'NMEA received')
 # !!! DO NOT CLOSE WHILE IN USE
 # when file closes, the test is over
 file.close()
-

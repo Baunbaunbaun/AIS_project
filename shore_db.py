@@ -17,7 +17,7 @@ def insert_lst(lst):
             insert(msg)
         except:
             continue
-    return 1
+    return lst[0]
  
 # return all mmsi from list, that is not in shore_db in specific slot
 def get_mmsi_not_in_slot(lst): # [slot, [mmsi_lst]]
@@ -34,11 +34,15 @@ def print_db():
 def get_size():
     return db.get_size(shore_cursor)
 
+# start test data
+def test_data_in_db(amount):
+    return db.test_data_in_db(shore_db,shore_cursor,amount)
+
+
 
 
 
 """
-
 
 def get_top_3():  
     return db.get_top_3(shore_cursor)

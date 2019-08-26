@@ -2,6 +2,7 @@
 
 # imports
 import sqlite3
+import time
 
 # variables
 statement = ''
@@ -82,7 +83,7 @@ def get_messages(cursor, lst): # [slot, [mmsi_lst]]
     return out
 
 def printRows(cursor):
-    statement = 'SELECT * FROM messages'
+    statement = 'SELECT * FROM messages ORDER BY slot'
     cursor.execute(statement)
     print('DB: Printing * from DB')  
     count = 0  
@@ -123,3 +124,25 @@ def lst_minus_lst(lst1,lst2):
         except:
             continue
     return lst1
+
+# put a sequence of numbers in DB
+# 2 rows pr 1 slot 
+# slot numbers are always even
+def test_data_in_db(db, cursor, amount):
+    slots = []
+    for i in range(amount):
+        slots.append(i)
+        for mmsi in range(int(amount/2)):
+            key = time.time()
+            try:
+                insert(db, cursor, key, i, mmsi, float(i), float(i), float(i))
+            except:
+                continue
+    print('Test DB created')
+    printRows(cursor)
+    return slots
+
+
+def delete(db,cursor,slot):
+    cursor.execute('DELETE FROM messages WHERE slot = ' + str(slot))
+    db.commit()
