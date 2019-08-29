@@ -1,7 +1,10 @@
 import socket
 import queue
+import random
 import vessel_db as vdb
 import functions as fun
+import time
+
 
 # variable declarations
 sentence = ''
@@ -15,31 +18,45 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # connet to server
 client_socket.connect((serverName,serverPort))
 
-print('VCON!')
-
 def send():
 
 	while(True):
+
 		if(send_queue.empty()):
-			print('ABORTING: no more to send')
-			break
-		out = send_queue.get()
+			print('ABORTING: no more to send ', time.time())
+			out = []
+			#break
+		else: 
+			out = send_queue.get()
+
+		# do not send empty list of mmsi
+		#if(len(out)==3):
+		#	if (len(out[2])==0):
+		#		out = []
 		print('\nVES: sending:\n', out)
 		client_socket.send(str(out).encode())  						# SEND
 		try:
 			sentence = client_socket.recv(1024).decode()			# RECEIVE
 			print('\nVES: receive:\n', sentence)
 			sentence_eval = eval(sentence)
+
+			try: 
+				print(len(out)+len(sentence))
+				if(len(out)+len(sentence) == 2):
+					print("Closing connection. Nothing is send.")
+					break
+			except:
+				pass
+
 			# receive slot number, delete this slot
-			if(type(sentence_eval)==type(9)): 
+			if(type(sentence_eval)==type(9)): 						# DELETE
 				print('delete slot ', sentence_eval)
 				vdb.delete(sentence_eval)
 				continue
 			# receive request, get messages, send back to shore
-			msg = vdb.get_messages(sentence_eval)
+			msg = vdb.get_messages(sentence_eval)					# FETCH
 			send_queue.put(msg)
 		except:
-			print('VES prob with receive')
 			pass
 	
 	vdb.print_db()

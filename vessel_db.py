@@ -1,16 +1,27 @@
 ### VESSEL DB ###
 import db
+import random
 
 # create db
 vessel_db, vessel_cursor = db.create_DB('vessel')
 # create table for incoming AIS
 db.create_msg_table(vessel_db, vessel_cursor)
 
+# simulate function that can measure 
+# connectivity on board vessel
+def get_connection_level():
+        return random.randint(0,2)
+
 def insert(key, slot, mmsi, timestamp, x, y):
     db.insert(vessel_db, vessel_cursor, key, slot, mmsi, timestamp, x, y)
 
 def get_mmsi_in_slot(slot):
-    return db.get_mmsi_in_slot(vessel_cursor, slot) 
+    lst = db.get_mmsi_in_slot(vessel_cursor, slot) 
+    out = []
+    out.append(slot)
+    out.append(get_connection_level())
+    out.append(lst[1])
+    return out
 
 def get_messages(lst): # [slot, [mmsi_lst]]
     return db.get_messages(vessel_cursor, lst)

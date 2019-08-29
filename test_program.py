@@ -1,9 +1,9 @@
 import vessel_db as vdb
+
 import conn_vessel as vcon
-import functions as fun
 
 # fill up db
-slots_vessel = vdb.test_data_in_db(8)
+slots_vessel = vdb.test_data_in_db(10)
 
 # fill up send_queue
 for slot in slots_vessel:
