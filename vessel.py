@@ -1,10 +1,10 @@
 ### VESSEL AIS SERVICE ###
 
 # starts mock NMEA signal
-import mock_signal as mock
-import vessel_db as vdb
-import conn_vessel as vcon
-import functions as fun
+import mock_signal  as mock
+import vessel_db    as vdb
+import vessel_connection as vcon
+import functions    as fun
 import time
 import ais
 import hashlib
@@ -121,15 +121,8 @@ def NMEA_import():
             # this try statement, skips messages already in the DB
             try:
                 vdb.insert(key, slot, mmsi, timestamp, x, y)
-                
-                # FILL UP SDB FOR TESTING
-                if(mmsi%2==0): 
-                    input = key, slot, mmsi, timestamp, x, y
-                    #sdb.insert(input)
-
             except:
                 continue    
-
     return 
 
 # setup TEST
@@ -140,14 +133,12 @@ print("Slot size set to: ", slot_size)
 mock.setup(100, 0.1)
 print(" Sleep: ", mock.sleep, " cut: ", cut, 'slot size: ', slot_size)
 
-# start NMEA stream
-mock.start_stream()
-
 # start importing NMEA
 # put MMSI_menu's in send_queue
 NMEA_import()
 
-vdb.print_db()
+# print DB to see if slots have been deleted
+# vdb.print_db()
 
 # start sending LAISY data to shore
 vcon.send()

@@ -1,66 +1,89 @@
-### SHORE CONNECTION ###
+### CONNNECTION SHORE ###
 
-### CODE FROM python-sockets-tutorial/multiconn-server.py
-
-import sys
 import socket
-import selectors
-import types
-import shore_db as sdb
+import queue
+import shore_db     as sdb
+import functions    as fun
+import time
 
-# connection setup
+menu_lst = []
+receive_queue = queue.Queue(100)
 host = '127.0.0.1'
-port = 2001 
-server_addr = (host, port)
-sel = selectors.DefaultSelector()
+serverPort = 2001
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind(('', serverPort))
+server_socket.listen(1)
+print('The server is ready to receive')
 
-def accept_wrapper(sock):
-    conn, addr = sock.accept()  # Should be ready to read
-    print("accepted connection from", addr)
-    conn.setblocking(False)
-    data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
-    events = selectors.EVENT_READ | selectors.EVENT_WRITE
-    sel.register(conn, events, data=data)
+def eval_sentence(sentence):
+    lst = eval(sentence)
+
+    # always query the menu with lowest slot
+    # connectivity level (CL) 
+    if (len(lst) != 2):
+        global menu_lst
+        if(len(lst)==3):
+            menu_lst.append(lst)
+        
+        # there need to be at least 10 menus, so 
+        # to compare CL and request from the 
+        # most cost effecient vessel
+        try: 
+            if (len(menu_lst)<10 or len(lst[2]) == 0): 
+                return []
+        except: 
+            pass
+        # sort  
+        menu_lst = sorted(menu_lst)
+        # pop menu with lowest slot and CL
+        slot1 = menu_lst.pop(0)
+        # query
+        out = sdb.get_mmsi_not_in_slot(slot1)                           # REQUEST
+
+    else:
+        out = sdb.insert_lst(lst)                                       # INSERT
+
+    return out
 
 
-def service_connection(key, mask):
-    sock = key.fileobj
-    data = key.data
-    if mask & selectors.EVENT_READ:
-        recv_data = sock.recv(1024)  # Should be ready to read
-        if recv_data:
-            data.outb += recv_data
-        else:
-            print("closing connection to", data.addr)
-            sel.unregister(sock)
-            sock.close()
-    if mask & selectors.EVENT_WRITE:
-        if data.outb:
-            print("Received:\n", repr(data.outb) )    #, "to", data.addr)
-            
-            # insert in DB
-            sdb.insert(repr(data.outb))
+while True:
+    connectionSocket, addr = server_socket.accept()
+    print('accepted!')
+    out = ''
 
-            sent = sock.send(data.outb)  # Should be ready to write
-            data.outb = data.outb[sent:]
+    print('Initial size of shore DB: ', sdb.get_size())
 
-lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-lsock.bind(server_addr)
-lsock.listen()
-print("listening on", server_addr)
-lsock.setblocking(False)
-sel.register(lsock, selectors.EVENT_READ, data=None)
+    while(True):
+        try:
+            sentence = connectionSocket.recv(2048).decode()             # RECEIVE
+            print('\nSHORE receive with succes:\n', sentence)
+        except:
+            print('\nSHORE prob with receive!\n')
+            pass
+        if(len(sentence) == 0):
+            print('ABORTING: sentence empty\n')
+            break
 
-try:
-    while True:
-        events = sel.select(timeout=None)
-        for key, mask in events:
-            if key.data is None:
-                accept_wrapper(key.fileobj)
-            else:
-                service_connection(key, mask)
-except KeyboardInterrupt:
-    print("caught keyboard interrupt, exiting")
-    # sdb.print_db()
-finally:
-    sel.close()
+        # send
+        try:
+            # pop next MMSI menu or fetch messages
+            out = eval_sentence(sentence)
+        except:
+            print('\nNo evaluation of ', sentence, out)
+            continue
+
+        try:
+            print('\nSHORE send:\n', str(out))
+            connectionSocket.send(str(out).encode())                    # SEND
+        except:
+            print('Closing connection')
+            break
+
+    connectionSocket.close()
+    # TESTING WITH 1 CONNECTION
+    break
+
+sdb.print_db()
+print('\nSize shore DB: ', sdb.get_size())
+print('\nLeft in menu list: \n')
+fun.print_lst(menu_lst)

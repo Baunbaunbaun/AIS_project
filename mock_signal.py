@@ -19,7 +19,6 @@ def setup(queue_size, sleep_input):
         sleep = sleep_input
         print('MOCK setup: ', queue_size,' NMEA streaming')
 
-def start_stream():
         # Put [queue_size] NMEA messages in queue 
         for line in file: 
                 try: 
